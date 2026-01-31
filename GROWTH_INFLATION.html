@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Principles - Audio Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:wght@300;400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --text-primary: #e8e8ed;
+            --text-secondary: #a0a0b0;
+            --text-muted: #6a6a7a;
+            --accent: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.15);
+            --border: #2a2a3a;
+            --sidebar-width: 320px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #fafafa;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f0f0f5;
+            --text-primary: #1a1a2e;
+            --text-secondary: #4a4a5a;
+            --text-muted: #8a8a9a;
+            --accent: #4f46e5;
+            --accent-glow: rgba(79, 70, 229, 0.1);
+            --border: #e0e0e8;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Merriweather', Georgia, serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            transition: background var(--transition), color var(--transition);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            transition: transform var(--transition), background var(--transition);
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(calc(-1 * var(--sidebar-width) + 50px));
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .sidebar-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+        }
+
+        .collapse-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: all var(--transition);
+        }
+
+        .collapse-btn:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        .sidebar.collapsed .collapse-btn {
+            position: absolute;
+            right: -43px;
+            top: 20px;
+        }
+
+        .toc {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .toc::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .toc::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .toc::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .toc-item {
+            display: block;
+            padding: 12px 16px;
+            margin: 4px 0;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all var(--transition);
+            border-left: 3px solid transparent;
+        }
+
+        .toc-item:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .toc-item.active {
+            background: var(--accent-glow);
+            color: var(--accent);
+            border-left-color: var(--accent);
+            font-weight: 500;
+        }
+
+        .toc-section {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            padding: 20px 16px 8px;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            transition: margin var(--transition);
+        }
+
+        .sidebar.collapsed ~ .main {
+            margin-left: 50px;
+        }
+
+        /* Top Bar */
+        .topbar {
+            position: sticky;
+            top: 0;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 50;
+            backdrop-filter: blur(12px);
+            background: rgba(18, 18, 26, 0.9);
+        }
+
+        [data-theme="light"] .topbar {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .topbar-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .topbar-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .theme-toggle {
+            width: 44px;
+            height: 44px;
+            border: none;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 20px;
+            transition: all var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), #a855f7);
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        /* Content */
+        .content {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 60px 32px 120px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 60px 0 80px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 60px;
+        }
+
+        .hero h1 {
+            font-family: 'Inter', sans-serif;
+            font-size: 42px;
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero .subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        .section {
+            padding: 48px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section:last-child {
+            border-bottom: none;
+        }
+
+        .section h2 {
+            font-family: 'Inter', sans-serif;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 32px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .section h2::before {
+            content: '';
+            width: 4px;
+            height: 32px;
+            background: linear-gradient(180deg, var(--accent), #a855f7);
+            border-radius: 2px;
+        }
+
+        .section h3 {
+            font-family: 'Inter', sans-serif;
+            font-size: 20px;
+            font-weight: 500;
+            margin: 40px 0 20px;
+            color: var(--text-primary);
+        }
+
+        .section p {
+            margin-bottom: 24px;
+            color: var(--text-secondary);
+            font-size: 17px;
+        }
+
+        .highlight-box {
+            background: var(--accent-glow);
+            border-left: 4px solid var(--accent);
+            padding: 24px 28px;
+            border-radius: 0 12px 12px 0;
+            margin: 32px 0;
+        }
+
+        .highlight-box p {
+            margin-bottom: 0;
+            color: var(--text-primary);
+            font-style: italic;
+        }
+
+        .key-point {
+            background: var(--bg-tertiary);
+            padding: 20px 24px;
+            border-radius: 12px;
+            margin: 24px 0;
+            border: 1px solid var(--border);
+        }
+
+        .key-point strong {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Scroll to top */
+        .scroll-top {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            width: 48px;
+            height: 48px;
+            background: var(--accent);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all var(--transition);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.5);
+        }
+
+        /* Mobile */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .sidebar.collapsed ~ .main {
+                margin-left: 0;
+            }
+
+            .mobile-menu {
+                display: flex !important;
+            }
+
+            .content {
+                padding: 40px 24px 100px;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+        }
+
+        .mobile-menu {
+            display: none;
+            width: 44px;
+            height: 44px;
+            border: none;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 20px;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 90;
+        }
+
+        .overlay.visible {
+            display: block;
+        }
+
+        /* Search Trigger in Sidebar */
+        .search-trigger {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 12px 16px;
+            padding: 10px 14px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .search-trigger:hover {
+            border-color: var(--accent);
+            color: var(--text-secondary);
+        }
+
+        .search-trigger span {
+            flex: 1;
+        }
+
+        .search-trigger kbd {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            padding: 2px 6px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-muted);
+        }
+
+        /* Search Modal */
+        .search-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 10vh;
+        }
+
+        .search-modal.open {
+            display: flex;
+        }
+
+        .search-container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            margin: 0 20px;
+        }
+
+        .search-header {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            gap: 12px;
+        }
+
+        .search-input-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-tertiary);
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .search-input-wrapper:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .search-icon {
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .search-input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            color: var(--text-primary);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-kbd {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            padding: 4px 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-muted);
+        }
+
+        .search-close {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            transition: all var(--transition);
+        }
+
+        .search-close:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        .search-results {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .search-results::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .search-results::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .search-empty {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+        }
+
+        .search-result-item {
+            display: block;
+            padding: 14px 16px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all var(--transition);
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .search-result-item:hover,
+        .search-result-item.selected {
+            background: var(--bg-tertiary);
+            border-color: var(--border);
+        }
+
+        .search-result-item.selected {
+            border-color: var(--accent);
+        }
+
+        .search-result-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .search-result-preview {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .search-result-preview mark {
+            background: var(--accent-glow);
+            color: var(--accent);
+            padding: 1px 4px;
+            border-radius: 3px;
+        }
+
+        .search-no-results {
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .search-no-results p {
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .search-footer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            padding: 12px 20px;
+            border-top: 1px solid var(--border);
+            background: var(--bg-tertiary);
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .search-footer kbd {
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            padding: 2px 6px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            margin-right: 4px;
+        }
+
+        @media (max-width: 1024px) {
+            .search-trigger kbd {
+                display: none;
+            }
+        }
+
+        /* Chart Styles */
+        .chart-container {
+            display: flex;
+            gap: 32px;
+            margin: 32px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .chart-wrapper {
+            flex: 1;
+            min-width: 280px;
+            max-width: 350px;
+            background: var(--bg-tertiary);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .chart-wrapper h4 {
+            font-family: 'Inter', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .chart-wrapper canvas {
+            max-height: 250px;
+        }
+
+        .chart-subtitle {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 12px;
+            margin-bottom: 0;
+        }
+
+        .chart-legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px 24px;
+            margin-top: 24px;
+            padding: 20px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .chart-insight {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-top: 24px;
+        }
+
+        .chart-insight p {
+            margin: 0;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .chart-insight strong {
+            color: var(--accent);
+        }
+
+        .chart-tooltip {
+            background: var(--bg-secondary) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 8px !important;
+            padding: 8px 12px !important;
+            font-family: 'Inter', sans-serif !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" onclick="toggleSidebar(); closeSearch();"></div>
+    
+    <!-- Search Modal -->
+    <div class="search-modal" id="searchModal">
+        <div class="search-container">
+            <div class="search-header">
+                <div class="search-input-wrapper">
+                    <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search content..." autocomplete="off">
+                    <kbd class="search-kbd">ESC</kbd>
+                </div>
+                <button class="search-close" onclick="closeSearch()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="search-results" id="searchResults">
+                <div class="search-empty">
+                    <p>Type to search through all sections...</p>
+                </div>
+            </div>
+            <div class="search-footer">
+                <span><kbd>↑</kbd> <kbd>↓</kbd> Navigate</span>
+                <span><kbd>Enter</kbd> Go to section</span>
+                <span><kbd>ESC</kbd> Close</span>
+            </div>
+        </div>
+    </div>
+    
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-title">Contents</span>
+            <button class="collapse-btn" onclick="toggleSidebar()" title="Toggle sidebar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 18l-6-6 6-6"/>
+                </svg>
+            </button>
+        </div>
+        <div class="search-trigger" onclick="openSearch()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+            <span>Search...</span>
+            <kbd>⌘K</kbd>
+        </div>
+        <nav class="toc">
+            <div class="toc-section">Introduction</div>
+            <a href="#intro" class="toc-item">The Big Picture</a>
+            <a href="#transactions" class="toc-item">Understanding Transactions</a>
+            
+            <div class="toc-section">Core Drivers</div>
+            <a href="#four-forces" class="toc-item">The Four Forces</a>
+            <a href="#bonds" class="toc-item">How Bonds Work</a>
+            <a href="#stocks" class="toc-item">How Stocks Work</a>
+            
+            <div class="toc-section">Asset Classes</div>
+            <a href="#ilb" class="toc-item">Inflation-Linked Bonds</a>
+            <a href="#commodities" class="toc-item">Commodities</a>
+            <a href="#gold" class="toc-item">Gold</a>
+            <a href="#credit" class="toc-item">Credit Spreads</a>
+            
+            <div class="toc-section">Framework</div>
+            <a href="#all-weather" class="toc-item">The All-Weather Framework</a>
+            <a href="#differences" class="toc-item">Transaction Approach</a>
+            <a href="#risk-premium" class="toc-item">Risk vs Risk Premium</a>
+            
+            <div class="toc-section">Principles</div>
+            <a href="#risk-return" class="toc-item">Risk-Return Relationship</a>
+            <a href="#connecting" class="toc-item">Connecting Price & Value</a>
+            <a href="#core-principles" class="toc-item">Three Core Principles</a>
+            <a href="#takeaways" class="toc-item">Key Takeaways</a>
+            <a href="#risk-allocation" class="toc-item">Risk Allocation</a>
+            <a href="#beta-vs-alpha" class="toc-item">Beta Over Alpha</a>
+            <a href="#environmental-balance" class="toc-item">Environmental Balance</a>
+            <a href="#capital-vs-risk" class="toc-item">Capital vs. Risk Impact</a>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <button class="mobile-menu" onclick="toggleSidebar()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 12h18M3 6h18M3 18h18"/>
+                </svg>
+            </button>
+            <span class="topbar-title">Investment Principles</span>
+            <div class="topbar-controls">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+                    <span class="theme-icon">☀️</span>
+                </button>
+            </div>
+            <div class="progress-bar" id="progress"></div>
+        </header>
+
+        <article class="content">
+            <div class="hero">
+                <h1>The Fundamental Drivers of Asset Returns</h1>
+                <p class="subtitle">A Conversational Guide to Investment Principles</p>
+            </div>
+
+            <section class="section" id="intro">
+                <h2>The Big Picture</h2>
+                <p>Let's talk about how financial markets really work, and why understanding them can help you become a better investor.</p>
+                <p>The most important thing to understand is that all assets have expectations for the future built into their prices. When you look at any market, whether it's stocks, bonds, commodities, or anything else, you're actually looking at a picture of what people collectively expect the future to be. This picture includes expectations for economic growth, inflation, and how much compensation investors require for taking on risk.</p>
+                <p>Why is this true? Because every asset is essentially an exchange. You're giving up money today in exchange for cash flows in the future. The price you pay reflects assumptions about what those future cash flows will be, and what economic conditions will look like when you receive them.</p>
+                <div class="highlight-box">
+                    <p>If you can understand the link between market prices and the economic environment, you can build portfolios that don't depend on correctly predicting exactly how the future will unfold.</p>
+                </div>
+            </section>
+
+            <section class="section" id="transactions">
+                <h2>Understanding Asset Prices Through Transactions</h2>
+                <p>Markets and economies might look complex, but they're actually built from very simple pieces. They're nothing more than the sum of all the transactions happening within them.</p>
+                <p>Think about what a transaction really is. A buyer gives money or credit to a seller, and the seller gives a good, a service, or a financial asset in exchange. That's it. A market is just all the buyers and sellers making exchanges for the same thing. The wheat market, for example, is just different people making different transactions for different reasons, all involving wheat. And an economy is all the transactions in all of its markets added together.</p>
+                <div class="key-point">
+                    <p><strong>The Core Formula:</strong> The price of anything equals the total amount spent by buyers divided by the total quantity sold by sellers. All changes in prices come from changes in either the money and credit being spent, or the amount being sold.</p>
+                </div>
+                <p>This might sound simple, but it's incredibly useful. If you know how much money and credit is being spent in a market, and you know how much is being sold, you understand why prices moved the way they did. And if you can anticipate how spending and selling will change going forward, you can anticipate price movements.</p>
+            </section>
+
+            <section class="section" id="four-forces">
+                <h2>The Four Forces That Drive All Asset Returns</h2>
+                <p>Every asset class is essentially a different package of exposures to the same four underlying forces: expectations for growth, expectations for inflation, risk premiums, and discount rates.</p>
+                
+                <h3>Growth Expectations</h3>
+                <p>Growth expectations matter because the value of any investment depends partly on how much economic activity there will be. If people expect the economy to grow faster than previously thought, assets tied to that growth become more valuable.</p>
+                
+                <h3>Inflation Expectations</h3>
+                <p>Inflation expectations matter because they affect how much your future cash flows will be worth in real terms. Higher expected inflation means that the dollars you'll receive in the future will buy less, which makes those future cash flows less valuable today.</p>
+                
+                <h3>Risk Premiums</h3>
+                <p>Risk premiums reflect the extra compensation investors demand for taking on uncertainty. When people feel more nervous about the future, they demand higher returns to hold risky assets, which pushes prices down.</p>
+                
+                <h3>Discount Rates</h3>
+                <p>Discount rates represent the interest rate used to translate future cash flows into present values. Higher interest rates make future cash flows worth less today, because you could alternatively earn more just by leaving your money in safe investments.</p>
+                
+                <div class="highlight-box">
+                    <p>Different asset classes respond differently to changes in these four forces. Understanding these relationships is the key to building a resilient portfolio.</p>
+                </div>
+            </section>
+
+            <section class="section" id="bonds">
+                <h2>How Bonds Work</h2>
+                <p>Let's start with government bonds, because they're the simplest way to understand how expectations get priced into assets.</p>
+                <p>When you buy a bond, you're exchanging money today for a promise to receive fixed payments in the future. If inflation is expected to be high, those future payments will be worth less in real terms, so you'll demand a higher yield to compensate. As expectations for future inflation change, bond yields change to reflect those new expectations.</p>
+                <p>The yield on a bond has two main components. The first is compensation for expected inflation, often called the break-even inflation rate. The second is the real yield, which is the return you demand above inflation just to part with your cash. You can think of the real yield as reflecting the opportunity cost of capital in an economy.</p>
+                <div class="key-point">
+                    <p><strong>Bond Environmental Bias:</strong> Bonds generally perform best when both growth and inflation expectations are declining. When growth is weak, yields fall and bond prices rise. When inflation is low, the fixed payments bonds promise become worth more.</p>
+                </div>
+            </section>
+
+            <section class="section" id="stocks">
+                <h2>How Stocks Work</h2>
+                <p>Stocks work differently from bonds because their cash flows aren't fixed. The value of a stock depends on expectations for future earnings, which are tied to economic growth.</p>
+                <p>When growth is stronger than expected, companies typically see higher revenues and wider profit margins, which means higher earnings. This is bullish for stock prices. However, there's a complication: when growth expectations rise, expectations for central bank tightening also increase, which pushes up the interest rates used to discount those future earnings. This offsets some of the bullish impact.</p>
+                <p>Lower-than-expected inflation is generally good for stocks for several reasons. It tends to improve profit margins because input costs fall faster than companies adjust their prices. It reduces uncertainty, making economic planning easier. And it puts downward pressure on interest rates, which increases the present value of future earnings.</p>
+                <div class="highlight-box">
+                    <p>Stocks tend to have a positive bias toward environments where growth is rising and inflation is falling. This is sometimes called the Goldilocks scenario.</p>
+                </div>
+            </section>
+
+            <section class="section" id="ilb">
+                <h2>Inflation-Linked Bonds</h2>
+                <p>Inflation-linked bonds are interesting because their prices are primarily driven by real yields rather than nominal yields.</p>
+                <p>These bonds promise to pay you a fixed real return by adjusting their payments based on actual inflation. Because of this, their prices move mainly with changes in real interest rates. When growth is weaker than expected and real yields fall, inflation-linked bond prices rise. This makes them highly sensitive to growth expectations.</p>
+                <p>They also have a modest positive bias toward rising inflation environments, not because their prices mechanically respond to expected inflation, but because their payments accumulate higher inflation over time, and demand for inflation protection tends to increase when inflation is rising.</p>
+            </section>
+
+            <section class="section" id="commodities">
+                <h2>Commodities</h2>
+                <p>Commodities behave quite differently from financial assets. Stronger-than-expected growth tends to increase demand for raw materials, which typically can't be met immediately by new supply, so prices rise.</p>
+                <p>Higher-than-expected inflation often coincides with rising commodity prices, because commodities are frequently the production inputs whose costs are rising. Plus, in periods of rising inflation, demand for real assets like commodities tends to increase as investors seek protection against currency debasement.</p>
+                <div class="key-point">
+                    <p><strong>Important Caveat:</strong> Supply dynamics can sometimes dominate. A supply shock, like an oil embargo, can push commodity prices up while simultaneously hurting growth. So the relationship between commodities and growth isn't always clean.</p>
+                </div>
+            </section>
+
+            <section class="section" id="gold">
+                <h2>Gold</h2>
+                <p>Gold is unique among commodities. Unlike most raw materials, demand for gold isn't primarily driven by industrial use, which makes its relationship with economic growth unreliable.</p>
+                <p>What gold does respond to is inflation expectations and concerns about currency debasement. When people worry about the value of paper money eroding, they often turn to gold as a store of value. Rising inflation expectations tend to support gold prices, while falling inflation expectations tend to weigh on them.</p>
+            </section>
+
+            <section class="section" id="credit">
+                <h2>Credit Spreads</h2>
+                <p>Corporate bonds have an additional component beyond government bonds: they carry default risk. The extra yield they pay above government bonds is called the credit spread.</p>
+                <p>When growth is stronger than expected, companies tend to generate higher profits and have better ability to service their debt. This reduces perceived default risk, causing spreads to tighten, which is good for corporate bond returns.</p>
+                <p>The relationship with inflation is more complicated. Mild disinflation can actually help corporate bonds because it tends to improve profit margins. But severe disinflation, especially deflation, is disastrous for credit. Deflation tends to occur in depressionary environments where defaults spike.</p>
+                <div class="highlight-box">
+                    <p>While moderate disinflation might be fine for credit, you shouldn't rely on corporate bonds to protect you in extreme inflation-down scenarios.</p>
+                </div>
+            </section>
+
+            <section class="section" id="all-weather">
+                <h2>The All-Weather Framework</h2>
+                <p>We can organize these relationships into a simple framework. Picture a box with four quadrants. On one axis, you have growth expectations, either rising or falling. On the other axis, you have inflation expectations, either rising or falling.</p>
+                
+                <h3>Growth Rising, Inflation Falling (Goldilocks)</h3>
+                <p>Stocks and corporate credit tend to do well in this environment.</p>
+                
+                <h3>Growth Rising, Inflation Rising (Reflation)</h3>
+                <p>Commodities tend to benefit, along with some inflation-linked assets.</p>
+                
+                <h3>Growth Falling, Inflation Falling (Disinflation)</h3>
+                <p>Government bonds tend to do well as yields fall.</p>
+                
+                <h3>Growth Falling, Inflation Rising (Stagflation)</h3>
+                <p>This is the most challenging environment. Commodities and inflation-linked bonds may do relatively better, but it's generally difficult for most assets.</p>
+                
+                <div class="key-point">
+                    <p><strong>Key Insight:</strong> The power of this framework is that it lets you build portfolios designed to have something working in each environment, rather than betting everything on one particular outcome.</p>
+                </div>
+            </section>
+
+            <section class="section" id="differences">
+                <h2>The Transaction Approach vs. Conventional Economics</h2>
+                <p>There are some important differences between this transaction-based approach and conventional economics.</p>
+                <p>First, conventional economics typically measures demand in terms of units wanted at various prices. The transaction approach measures demand as total spending, the actual money and credit being spent. This matters because it forces you to pay attention to the credit system. Credit can expand and contract rapidly, and when it does, spending power changes even if nothing else in the economy has shifted.</p>
+                <p>Second, conventional models often treat markets as if there's one representative buyer and one representative seller making rational decisions based on prices and elasticities. The transaction approach emphasizes identifying who the actual buyers and sellers are, understanding their different sizes and motivations, and tracking how their behavior changes.</p>
+                <p>Third, conventional economics explains spending that exceeds the money supply through the concept of velocity, how fast money changes hands. But most of what gets attributed to velocity actually comes from credit creation. Understanding this is crucial because credit can expand and contract much faster than the money supply, which is why we have economic cycles and asset bubbles.</p>
+            </section>
+
+            <section class="section" id="risk-premium">
+                <h2>Risk vs. Risk Premium</h2>
+                <p>Here's an important distinction that many investors miss: just because something is risky doesn't mean it offers a risk premium.</p>
+                <p>A risk premium exists when there's a deal between two parties where one side is willing to pay extra to offload risk, and the other side demands extra to take it on.</p>
+                <p>Think about a company selling equity shares to raise capital. The company gets stable, known funding that can't be pulled away and doesn't need to be paid back. They're happy to pay a premium for that certainty. Meanwhile, investors are giving up certain cash for an uncertain claim on the company's future performance. They demand a premium for taking that risk. So both sides of the deal create a risk premium.</p>
+                <p>But consider two parties exchanging currencies, say British pounds for euros. Both might view the foreign currency as riskier than their own, but neither has an obvious reason to pay a premium in the exchange. There's risk, but not necessarily a risk premium.</p>
+                <div class="highlight-box">
+                    <p>Risk premiums can also change over time. In periods of heightened uncertainty, investors demand larger premiums to take on risk, which pushes prices down.</p>
+                </div>
+            </section>
+
+            <section class="section" id="risk-return">
+                <h2>The Risk-Return Relationship</h2>
+                <p>Because all investments compete with one another, we should expect the returns of major asset classes over long periods to be related to their risks. Assets perceived as riskier should offer higher expected returns to induce investors to hold them.</p>
+                <p>One popular measure of risk is volatility, how much returns fluctuate over time. The more volatile an investment, the greater the chance you might need to sell at a bad time and realize large losses.</p>
+                <p>Historical data confirms this relationship. Over long periods, major asset classes have returned more than cash, and there's a clear pattern: assets with higher volatility have tended to deliver higher returns. This upward-sloping relationship between risk and return is sometimes called the risk curve.</p>
+                <div class="key-point">
+                    <p><strong>Equilibrium:</strong> If everyone prefers less volatile investments at the same expected return, they'll buy bonds and sell stocks until stocks offer sufficiently higher expected returns to compensate for their higher volatility.</p>
+                </div>
+            </section>
+
+            <section class="section" id="connecting">
+                <h2>Connecting Price and Value</h2>
+                <p>We've described two perspectives on what drives prices. One says the value of an investment depends on expected future cash flows and how they're discounted. The other says prices are determined by the money and credit spent and the quantity sold.</p>
+                <p>These perspectives are connected. When expectations about the future change, investors update what they're willing to pay. This changes their buying and selling behavior, which changes the total dollars spent relative to quantity sold, which moves the price.</p>
+                <p>But the relationship also works in reverse. When buying or selling changes for any reason, even reasons unrelated to fundamental value, prices move, and the picture of the future that prices paint changes too.</p>
+                <p>Both perspectives are useful. The fundamental approach explains direction and motivation, why participants are changing their bids and offers. The transaction approach explains timing and magnitude, who actually had the money or credit to act, and who was forced to sell.</p>
+            </section>
+
+            <section class="section" id="core-principles">
+                <h2>The Three Core Principles</h2>
+                
+                <h3>1. Take a Fundamental Approach</h3>
+                <p>Markets and economies are not random. They work in logical cause-and-effect ways and can be understood. The relationships driving them are timeless and universal in nature. By understanding these relationships, you can better anticipate the future. This is different from a purely statistical approach that relies on temporary patterns that can change rapidly.</p>
+                
+                <h3>2. Invest Systematically</h3>
+                <p>By writing down your understanding of how the economic and market machines work, literally cataloging every relationship and creating explicit rules based on those relationships, you can debate your understanding with others, stress test it across time and different conditions, and compound and improve your knowledge over time.</p>
+                
+                <h3>3. Maximize Diversification</h3>
+                <p>No matter how much you think you know, surprises are the norm in markets. These surprises can cause outsized moves in any given market or asset class, and can cause even your highest-conviction ideas to go wrong. It's critical to never concentrate in any one thing and to diversify across many good, unrelated sources of return.</p>
+            </section>
+
+            <section class="section" id="takeaways">
+                <h2>Key Takeaways</h2>
+                <div class="key-point">
+                    <p><strong>Discounting Drives Price:</strong> Every investment is an exchange of money today for cash flows in the future. The price depends on both the expected future cash flows and the interest rate they're discounted at.</p>
+                </div>
+                <div class="key-point">
+                    <p><strong>Risk Premiums Aren't Automatic:</strong> Investors need to be compensated for taking on risk, but just because something is risky doesn't mean it offers a risk premium. What matters is whether the deal involves a transfer of risk that both parties want to make.</p>
+                </div>
+                <div class="key-point">
+                    <p><strong>Risk and Return Are Linked:</strong> In the long run, projected returns of stocks need to exceed bonds, which need to exceed cash, by appropriate risk premiums. If this relationship doesn't hold, investors reallocate, pushing prices toward equilibrium.</p>
+                </div>
+                <div class="key-point">
+                    <p><strong>Markets and Economy Are One:</strong> If you can't make money in markets, you probably don't understand how economies work better than the consensus. And if you specialize in a particular market but don't understand economics, you can suffer intolerable losses when economy-wide forces become the primary drivers of returns.</p>
+                </div>
+                
+                <h3 id="risk-allocation">The Critical Role of Risk Allocation</h3>
+                <div class="key-point">
+                    <p><strong>Risk Drives Return:</strong> It is the risk allocation, not the capital allocation, of a portfolio that determines its performance. How you distribute risk matters more than how you distribute dollars.</p>
+                </div>
+                <div class="key-point">
+                    <p><strong>Concentrated Risk Leads to Inconsistent Returns:</strong> Portfolios that concentrate their risk in a single asset class will inherit the boom/bust profile and environmental biases of that asset class. This makes them vulnerable to sustained periods of underperformance.</p>
+                </div>
+                <div class="key-point">
+                    <p><strong>No Tradeoff Between Diversification and Return:</strong> By risk-adjusting asset classes, investors can achieve better diversification without sacrificing the return that they require. You don't have to give up returns to gain balance.</p>
+                </div>
+                
+                <h3 id="beta-vs-alpha">Beta Over Alpha</h3>
+                <p>For nearly everyone, the strategic asset allocation decision (beta) is far more important than the tactical decision (alpha). It's very difficult to make good tactical decisions or to trust that others will have enough skill to make them on one's behalf.</p>
+                <div class="highlight-box">
+                    <p>For most investors, the biggest juice to squeeze is in making a great beta portfolio—a portfolio which does not rely on making bets or predicting which assets will do well, but rather is structurally designed to do well whatever the future has in store.</p>
+                </div>
+                <p>Beta is a reliable source of return because one can trust that asset classes will outperform cash over the long term. There are two reasons for this.</p>
+                <div class="key-point">
+                    <p><strong>The Capitalist System Depends On It:</strong> Capital formation falls apart if investments don't produce better returns than cash over time, so central banks do everything in their power to ensure this remains the case.</p>
+                </div>
+                <div class="key-point">
+                    <p><strong>Risk Premium Is Embedded:</strong> Investors want to be compensated for the risk of investing, so there is typically a risk premium embedded in asset prices. This premium is what makes holding assets worthwhile compared to holding cash.</p>
+                </div>
+                <p>That said, the outperformance of asset classes over cash (beta) cannot be very positive for too long. If it was, it would be too good a deal, and all the money would go into it. So you can't expect too good of a return above cash from assets, and any asset class will have winning and losing periods.</p>
+                <div class="key-point">
+                    <p><strong>Realistic Expectations:</strong> Monthly return-to-risk ratios of betas will typically be in the range of about 0.2 to 0.25. This is the realistic baseline for what passive exposure to asset classes can deliver.</p>
+                </div>
+                <div class="key-point">
+                    <p><strong>Similar Risk-Adjusted Returns:</strong> Since all investments compete with each other, asset classes have similar returns relative to risks. Higher-risk assets will tend to provide higher returns above cash to compensate for their higher risks, while lower-risk assets will tend to provide lower returns.</p>
+                </div>
+                <div class="key-point">
+                    <p><strong>Return Streams Can Be Risk Balanced:</strong> Low-return, low-risk assets like bonds can be transformed into high-return, high-risk assets by using leverage (borrowing cash to buy more of them). This allows low-risk assets like bonds to better diversify high-risk assets like stocks in a portfolio, without sacrificing returns.</p>
+                </div>
+                <p>Risk-adjusting assets provides many assets to choose from to make a well-diversified portfolio at whatever level of return one is interested in. You're no longer constrained by the natural risk levels of each asset class—you can dial them up or down to achieve true balance.</p>
+                
+                <h3 id="environmental-balance">Environmental Balance</h3>
+                <p>Reliable diversification requires balancing risks across economic environments. Changes in discounted growth, inflation, risk premia, and discount rates cause changes in asset prices. So, one way to build a well-diversified beta portfolio that performs well across environments is to put an equal amount of risk into assets that do well when:</p>
+                <div class="key-point">
+                    <p><strong>a)</strong> Growth is faster than expected</p>
+                    <p><strong>b)</strong> Growth is slower than expected</p>
+                    <p><strong>c)</strong> Inflation is higher than expected</p>
+                    <p><strong>d)</strong> Inflation is lower than expected</p>
+                </div>
+                <p>This four-quadrant approach ensures you have something working regardless of which economic scenario unfolds. Rather than betting on one outcome, you're structurally positioned to collect risk premiums in any environment.</p>
+                
+                <h3 id="capital-vs-risk">Capital Allocation vs. Risk Impact</h3>
+                <p>The difference between capital allocation and risk allocation is critical to understand. A typical portfolio might look diversified by capital, but the risk tells a very different story.</p>
+                
+                <div class="chart-container">
+                    <div class="chart-wrapper">
+                        <h4>Capital Allocation</h4>
+                        <canvas id="capitalChart"></canvas>
+                        <p class="chart-subtitle">How the money is distributed</p>
+                    </div>
+                    <div class="chart-wrapper">
+                        <h4>Risk Impact</h4>
+                        <canvas id="riskChart"></canvas>
+                        <p class="chart-subtitle">Where the risk actually comes from</p>
+                    </div>
+                </div>
+                
+                <div class="chart-insight">
+                    <p><strong>The Key Insight:</strong> Even though equities represent only 60% of the capital in this typical portfolio, they account for 82% of the risk. This means the portfolio's performance will be almost entirely driven by how stocks perform—the other assets barely matter from a risk perspective.</p>
+                </div>
+                
+                <div class="highlight-box">
+                    <p>All asset prices have built into them expectations about future economic conditions. As those expectations change, prices change. Understanding this connection between asset prices and the economic environment is essential to investing well.</p>
+                </div>
+            </section>
+        </article>
+    </main>
+
+    <button class="scroll-top" id="scrollTop" onclick="scrollToTop()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 15l-6-6-6 6"/>
+        </svg>
+    </button>
+
+    <script>
+        // Theme toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', next);
+            document.querySelector('.theme-icon').textContent = next === 'light' ? '🌙' : '☀️';
+            localStorage.setItem('theme', next);
+        }
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        document.querySelector('.theme-icon').textContent = savedTheme === 'light' ? '🌙' : '☀️';
+
+        // Sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.overlay');
+            
+            if (window.innerWidth <= 1024) {
+                sidebar.classList.toggle('open');
+                overlay.classList.toggle('visible');
+            } else {
+                sidebar.classList.toggle('collapsed');
+            }
+        }
+
+        // Progress bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progress').style.width = scrolled + '%';
+
+            // Scroll to top button
+            const scrollBtn = document.getElementById('scrollTop');
+            if (winScroll > 500) {
+                scrollBtn.classList.add('visible');
+            } else {
+                scrollBtn.classList.remove('visible');
+            }
+
+            // Active TOC item
+            const sections = document.querySelectorAll('.section');
+            const tocItems = document.querySelectorAll('.toc-item');
+            
+            sections.forEach((section, index) => {
+                const rect = section.getBoundingClientRect();
+                if (rect.top <= 150 && rect.bottom >= 150) {
+                    tocItems.forEach(item => item.classList.remove('active'));
+                    const activeItem = document.querySelector(`.toc-item[href="#${section.id}"]`);
+                    if (activeItem) activeItem.classList.add('active');
+                }
+            });
+        });
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Close sidebar on mobile when clicking a link
+        document.querySelectorAll('.toc-item').forEach(item => {
+            item.addEventListener('click', () => {
+                if (window.innerWidth <= 1024) {
+                    document.getElementById('sidebar').classList.remove('open');
+                    document.querySelector('.overlay').classList.remove('visible');
+                }
+            });
+        });
+
+        // Search functionality
+        const searchData = [
+            { id: 'intro', title: 'The Big Picture', content: 'Let\'s talk about how financial markets really work, and why understanding them can help you become a better investor. The most important thing to understand is that all assets have expectations for the future built into their prices. When you look at any market, whether it\'s stocks, bonds, commodities, or anything else, you\'re actually looking at a picture of what people collectively expect the future to be.' },
+            { id: 'transactions', title: 'Understanding Asset Prices Through Transactions', content: 'Markets and economies might look complex, but they\'re actually built from very simple pieces. They\'re nothing more than the sum of all the transactions happening within them. A buyer gives money or credit to a seller, and the seller gives a good, a service, or a financial asset in exchange. The price of anything equals the total amount spent by buyers divided by the total quantity sold by sellers.' },
+            { id: 'four-forces', title: 'The Four Forces That Drive All Asset Returns', content: 'Every asset class is essentially a different package of exposures to the same four underlying forces: expectations for growth, expectations for inflation, risk premiums, and discount rates. Growth expectations matter because the value of any investment depends partly on how much economic activity there will be.' },
+            { id: 'bonds', title: 'How Bonds Work', content: 'When you buy a bond, you\'re exchanging money today for a promise to receive fixed payments in the future. If inflation is expected to be high, those future payments will be worth less in real terms, so you\'ll demand a higher yield to compensate. The yield on a bond has two main components: compensation for expected inflation and the real yield.' },
+            { id: 'stocks', title: 'How Stocks Work', content: 'Stocks work differently from bonds because their cash flows aren\'t fixed. The value of a stock depends on expectations for future earnings, which are tied to economic growth. When growth is stronger than expected, companies typically see higher revenues and wider profit margins. Goldilocks scenario where growth is rising and inflation is falling.' },
+            { id: 'ilb', title: 'Inflation-Linked Bonds', content: 'Inflation-linked bonds are interesting because their prices are primarily driven by real yields rather than nominal yields. These bonds promise to pay you a fixed real return by adjusting their payments based on actual inflation. Their prices move mainly with changes in real interest rates.' },
+            { id: 'commodities', title: 'Commodities', content: 'Commodities behave quite differently from financial assets. Stronger-than-expected growth tends to increase demand for raw materials, which typically can\'t be met immediately by new supply, so prices rise. Higher-than-expected inflation often coincides with rising commodity prices.' },
+            { id: 'gold', title: 'Gold', content: 'Gold is unique among commodities. Unlike most raw materials, demand for gold isn\'t primarily driven by industrial use, which makes its relationship with economic growth unreliable. What gold does respond to is inflation expectations and concerns about currency debasement.' },
+            { id: 'credit', title: 'Credit Spreads', content: 'Corporate bonds have an additional component beyond government bonds: they carry default risk. The extra yield they pay above government bonds is called the credit spread. When growth is stronger than expected, companies tend to generate higher profits and have better ability to service their debt.' },
+            { id: 'all-weather', title: 'The All-Weather Framework', content: 'We can organize these relationships into a simple framework. Picture a box with four quadrants. On one axis, you have growth expectations, either rising or falling. On the other axis, you have inflation expectations. Goldilocks, Reflation, Disinflation, Stagflation. Build portfolios designed to have something working in each environment.' },
+            { id: 'differences', title: 'The Transaction Approach vs. Conventional Economics', content: 'There are some important differences between this transaction-based approach and conventional economics. Conventional economics typically measures demand in terms of units wanted at various prices. The transaction approach measures demand as total spending. Credit can expand and contract rapidly causing economic cycles and asset bubbles.' },
+            { id: 'risk-premium', title: 'Risk vs. Risk Premium', content: 'Here\'s an important distinction that many investors miss: just because something is risky doesn\'t mean it offers a risk premium. A risk premium exists when there\'s a deal between two parties where one side is willing to pay extra to offload risk, and the other side demands extra to take it on.' },
+            { id: 'risk-return', title: 'The Risk-Return Relationship', content: 'Because all investments compete with one another, we should expect the returns of major asset classes over long periods to be related to their risks. Assets perceived as riskier should offer higher expected returns. Volatility measures how much returns fluctuate over time. The risk curve shows the upward-sloping relationship.' },
+            { id: 'connecting', title: 'Connecting Price and Value', content: 'We\'ve described two perspectives on what drives prices. One says the value of an investment depends on expected future cash flows and how they\'re discounted. The other says prices are determined by the money and credit spent and the quantity sold. Both perspectives are connected and useful.' },
+            { id: 'core-principles', title: 'The Three Core Principles', content: 'Take a Fundamental Approach: Markets and economies are not random. Invest Systematically: Write down your understanding and create explicit rules. Maximize Diversification: Surprises are the norm in markets. Never concentrate in any one thing.' },
+            { id: 'risk-allocation', title: 'The Critical Role of Risk Allocation', content: 'Risk drives return. It is the risk allocation, not the capital allocation, of a portfolio that determines its performance. How you distribute risk matters more than how you distribute dollars. Concentrated risk leads to inconsistent returns. Portfolios that concentrate their risk in a single asset class will inherit the boom/bust profile and environmental biases. No tradeoff between diversification and return. By risk-adjusting asset classes, investors can achieve better diversification without sacrificing return.' },
+            { id: 'beta-vs-alpha', title: 'Beta Over Alpha', content: 'For nearly everyone, the strategic asset allocation decision beta is far more important than the tactical decision alpha. It is very difficult to make good tactical decisions or to trust that others will have enough skill to make them on your behalf. For most investors the biggest juice to squeeze is in making a great beta portfolio. A portfolio which does not rely on making bets or predicting which assets will do well, but rather is structurally designed to do well whatever the future has in store. Beta is a reliable source of return because asset classes will outperform cash over the long term. The capitalist system depends on it. Capital formation falls apart if investments dont produce better returns than cash over time so central banks do everything in their power to ensure this remains the case. Risk premium is embedded. Investors want to be compensated for the risk of investing so there is typically a risk premium embedded in asset prices. The outperformance of asset classes over cash cannot be very positive for too long. If it was it would be too good a deal and all the money would go into it. Monthly return-to-risk ratios of betas will typically be in the range of about 0.2 to 0.25. Since all investments compete with each other asset classes have similar returns relative to risks. Higher-risk assets will tend to provide higher returns above cash to compensate for their higher risks while lower-risk assets will tend to provide lower returns. Return streams can be risk adjusted to be risk balanced. Low-return low-risk assets like bonds can be transformed into high-return high-risk assets by using leverage borrowing cash to buy more of them. This allows low-risk assets like bonds to better diversify high-risk assets like stocks in a portfolio without sacrificing returns. Risk-adjusting assets provides many assets to choose from to make a well-diversified portfolio at whatever level of return one is interested in.' },
+            { id: 'environmental-balance', title: 'Environmental Balance', content: 'Reliable diversification requires balancing risks across economic environments. Changes in discounted growth, inflation, risk premia, and discount rates cause changes in asset prices. One way to build a well-diversified beta portfolio that performs well across environments is to put an equal amount of risk into assets that do well when growth is faster than expected, growth is slower than expected, inflation is higher than expected, and inflation is lower than expected. This four-quadrant approach ensures you have something working regardless of which economic scenario unfolds. Rather than betting on one outcome you are structurally positioned to collect risk premiums in any environment.' },
+            { id: 'capital-vs-risk', title: 'Capital Allocation vs Risk Impact', content: 'To understand why risk allocation matters more than capital allocation, consider a typical institutional portfolio. The capital allocation might look diversified but the risk impact tells a very different story. Equities go from 60% of capital to 82% of risk. A portfolio that looks diversified by dollars is actually dominated by a single risk factor. This is why understanding risk allocation not just capital allocation is essential. Nominal bonds real estate MBS cash corporate bonds high yield bonds IL bonds commodities.' },
+            { id: 'takeaways', title: 'Key Takeaways', content: 'Every investment is an exchange of money today for cash flows in the future. Investors need to be compensated for taking on risk. Expected returns are connected to expected levels of risk. Markets and the economy are the same thing viewed from different angles. Risk drives return. It is the risk allocation, not the capital allocation, of a portfolio that determines its performance. Concentrated risk leads to inconsistent returns. Portfolios that concentrate their risk in a single asset class will inherit the boom/bust profile and environmental biases of that asset class. No tradeoff between diversification and return. By risk-adjusting asset classes, investors can achieve better diversification without sacrificing return.' }
+        ];
+
+        let selectedIndex = -1;
+        let filteredResults = [];
+
+        function openSearch() {
+            document.getElementById('searchModal').classList.add('open');
+            document.getElementById('searchInput').focus();
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSearch() {
+            document.getElementById('searchModal').classList.remove('open');
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchResults').innerHTML = '<div class="search-empty"><p>Type to search through all sections...</p></div>';
+            selectedIndex = -1;
+            filteredResults = [];
+            document.body.style.overflow = '';
+        }
+
+        function highlightText(text, query) {
+            if (!query) return text;
+            const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+            return text.replace(regex, '<mark>$1</mark>');
+        }
+
+        function performSearch(query) {
+            const resultsContainer = document.getElementById('searchResults');
+            
+            if (!query.trim()) {
+                resultsContainer.innerHTML = '<div class="search-empty"><p>Type to search through all sections...</p></div>';
+                filteredResults = [];
+                selectedIndex = -1;
+                return;
+            }
+
+            const lowerQuery = query.toLowerCase();
+            filteredResults = searchData.filter(item => 
+                item.title.toLowerCase().includes(lowerQuery) || 
+                item.content.toLowerCase().includes(lowerQuery)
+            );
+
+            if (filteredResults.length === 0) {
+                resultsContainer.innerHTML = '<div class="search-no-results"><p>No results found for "' + query + '"</p></div>';
+                selectedIndex = -1;
+                return;
+            }
+
+            selectedIndex = 0;
+            resultsContainer.innerHTML = filteredResults.map((item, index) => {
+                const preview = item.content.length > 150 ? item.content.substring(0, 150) + '...' : item.content;
+                return `
+                    <div class="search-result-item ${index === 0 ? 'selected' : ''}" data-id="${item.id}" data-index="${index}" onclick="goToResult('${item.id}')">
+                        <div class="search-result-title">${highlightText(item.title, query)}</div>
+                        <div class="search-result-preview">${highlightText(preview, query)}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateSelection() {
+            const items = document.querySelectorAll('.search-result-item');
+            items.forEach((item, index) => {
+                item.classList.toggle('selected', index === selectedIndex);
+                if (index === selectedIndex) {
+                    item.scrollIntoView({ block: 'nearest' });
+                }
+            });
+        }
+
+        function goToResult(id) {
+            closeSearch();
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Search input events
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            performSearch(e.target.value);
+        });
+
+        document.getElementById('searchInput').addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (filteredResults.length > 0) {
+                    selectedIndex = Math.min(selectedIndex + 1, filteredResults.length - 1);
+                    updateSelection();
+                }
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (filteredResults.length > 0) {
+                    selectedIndex = Math.max(selectedIndex - 1, 0);
+                    updateSelection();
+                }
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (filteredResults.length > 0 && selectedIndex >= 0) {
+                    goToResult(filteredResults[selectedIndex].id);
+                }
+            }
+        });
+
+        // Global keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Cmd/Ctrl + K to open search
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                openSearch();
+            }
+            // Escape to close search
+            if (e.key === 'Escape') {
+                closeSearch();
+            }
+        });
+
+        // Click outside to close
+        document.getElementById('searchModal').addEventListener('click', (e) => {
+            if (e.target.id === 'searchModal') {
+                closeSearch();
+            }
+        });
+
+        // Chart.js - Capital Allocation vs Risk Impact
+        const chartColors = [
+            '#8b9dc3', // Equities - Muted blue-gray (matching image)
+            '#1e2a3a', // Nominal Bonds - Dark navy
+            '#a8b5c4', // Real Estate - Light gray-blue
+            '#c4ccd6', // MBS - Lighter gray
+            '#e8ecf0', // Cash/FX - Very light
+            '#e8b84a', // Corporate Bonds - Gold/Amber
+            '#c75450', // High Yield Bonds - Muted red
+            '#e07b4a', // IL Bonds - Orange
+            '#7eb876'  // Commodities - Muted green
+        ];
+
+        const capitalLabels = ['Equities', 'Nominal Bonds', 'Real Estate', 'MBS', 'Cash', 'Corporate Bonds', 'High Yield Bonds', 'IL Bonds', 'Commodities'];
+        const capitalData = [60, 11, 7, 6, 5, 5, 2, 2, 2];
+
+        const riskLabels = ['Equities', 'Nominal Bonds', 'Real Estate', 'MBS', 'FX', 'Corporate Bonds', 'High Yield Bonds', 'IL Bonds', 'Commodities'];
+        const riskData = [82, 1, 8, 1, 4, 2, 1, 0, 1];
+
+        const chartOptions = {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        font: {
+                            family: 'Inter',
+                            size: 10
+                        },
+                        padding: 8,
+                        usePointStyle: true,
+                        pointStyle: 'rectRounded',
+                        color: document.documentElement.getAttribute('data-theme') === 'light' ? '#444' : '#a0a0b0'
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(18, 18, 26, 0.95)',
+                    titleColor: '#e8e8ed',
+                    bodyColor: '#a0a0b0',
+                    borderColor: '#2a2a3a',
+                    borderWidth: 1,
+                    cornerRadius: 8,
+                    padding: 12,
+                    titleFont: {
+                        family: 'Inter',
+                        size: 14,
+                        weight: '600'
+                    },
+                    bodyFont: {
+                        family: 'Inter',
+                        size: 13
+                    },
+                    callbacks: {
+                        label: function(context) {
+                            return context.label + ': ' + context.raw + '%';
+                        }
+                    }
+                }
+            }
+        };
+
+        // Create Capital Allocation Chart
+        const capitalCtx = document.getElementById('capitalChart');
+        if (capitalCtx) {
+            new Chart(capitalCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: capitalLabels,
+                    datasets: [{
+                        data: capitalData,
+                        backgroundColor: chartColors,
+                        borderColor: document.documentElement.getAttribute('data-theme') === 'light' ? '#fff' : 'rgba(18, 18, 26, 0.8)',
+                        borderWidth: 2,
+                        hoverOffset: 8
+                    }]
+                },
+                options: chartOptions
+            });
+        }
+
+        // Create Risk Impact Chart
+        const riskCtx = document.getElementById('riskChart');
+        if (riskCtx) {
+            new Chart(riskCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: riskLabels,
+                    datasets: [{
+                        data: riskData,
+                        backgroundColor: chartColors,
+                        borderColor: document.documentElement.getAttribute('data-theme') === 'light' ? '#fff' : 'rgba(18, 18, 26, 0.8)',
+                        borderWidth: 2,
+                        hoverOffset: 8
+                    }]
+                },
+                options: chartOptions
+            });
+        }
+    </script>
+</body>
+</html>
