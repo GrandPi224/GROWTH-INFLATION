@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Diversification, Correlation, and Portfolio Risk</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+  <style>
+      body {
+            font-family: Arial, Helvetica, sans-serif;
+            background:#f4f5f3;
+            margin:0;
+            padding:30px;
+            color:#111;
+      }
+      h1 {
+            font-size:22px;
+            margin-bottom:10px;
+      }
+      h2 {
+            font-size:16px;
+            margin-top:28px;
+            margin-bottom:8px;
+      }
+      p {
+            margin:6px 0;
+            line-height:1.5;
+            max-width:1000px;
+      }
+      .wrapper {
+            position:relative;
+            width:1200px;
+            margin-bottom:30px;
+      }
+      .right-columns {
+            position:absolute;
+            top:40px;
+            right:-190px;
+            font-size:12px;
+            line-height:1.9;
+      }
+      .column {
+            display:inline-block;
+            width:90px;
+            text-align:right;
+            vertical-align:top;
+      }
+      .header {
+            font-weight:bold;
+            text-align:center;
+            margin-bottom:6px;
+      }
+      .section {
+            max-width:1000px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Diversification, Correlation, and Portfolio Risk</h1>
+  <div class="wrapper">
+    <canvas id="chart" width="1200" height="520"></canvas>canvas>
+    <div class="right-columns">
+        <div class="column">
+              <div class="header">RETURN-TO-RISK<br>RATIO</div>div>
+              0.25<br>0.28<br>0.31<br>0.36<br>0.42<br>0.50<br>0.63<br>0.83<br>1.25<br>2.50
+        </div>div>
+        <div class="column">
+              <div class="header">PROBABILITY OF LOSING<br>MONEY IN A GIVEN YEAR</div>div>
+              40%<br>39%<br>38%<br>36%<br>34%<br>31%<br>26%<br>20%<br>11%<br>1%
+        </div>div>
+    </div>div>
+  </div>div>
+  <script>
+    const x = Array.from({length:20}, (_,i)=>i+1);
+    function curve(start,floor,k){
+        return x.map(v => floor + (start-floor)*Math.exp(-k*(v-1)));
+    }
+    new Chart(document.getElementById("chart"),{
+        type:"line",
+        data:{
+              labels:x,
+              datasets:[
+                {label:"60% Correlation", data:curve(10,7.8,0.35), borderColor:"#c94c4c", borderWidth:3, tension:.3, pointRadius:0},
+                {label:"40% Correlation", data:curve(10,6.6,0.38), borderColor:"#3c6ea8", borderWidth:3, tension:.3, pointRadius:0},
+                {label:"20% Correlation", data:curve(10,5.0,0.42), borderColor:"#222", borderWidth:3, tension:.3, pointRadius:0},
+                {label:"10% Correlation", data:curve(10,3.8,0.45), borderColor:"#e3b04b", borderWidth:3, tension:.3, pointRadius:0},
+                {label:"0% Correlation",  data:curve(10,2.2,0.48), borderColor:"#2f9e6f", borderWidth:3, tension:.3, pointRadius:0}
+                    ]
+        },
+        options:{
+              responsive:false,
+              plugins:{
+                      legend:{display:false},
+                      annotation:{
+                                annotations:{
+                                            inst:{
+                                                          type:"box",
+                                                          xMin:3,xMax:6,
+                                                          yMin:7.4,yMax:8.8,
+                                                          backgroundColor:"rgba(201,76,76,0.25)",
+                                                          borderWidth:0
+                                            },
+                                            instLabel:{
+                                                          type:"label",
+                                                          xValue:4.5,yValue:9.1,
+                                                          content:["MOST INSTITUTIONAL","PORTFOLIOS"],
+                                                          font:{size:12,weight:"bold"}
+                                            },
+                                            beta:{
+                                                          type:"box",
+                                                          xMin:5,xMax:8.5,
+                                                          yMin:4.2,yMax:5.4,
+                                                          backgroundColor:"rgba(47,158,111,0.25)",
+                                                          borderWidth:0
+                                            },
+                                            betaLabel:{
+                                                          type:"label",
+                                                          xValue:6.5,yValue:3.5,
+                                                          content:["DIVERSIFIED BETA","PORTFOLIOS"],
+                                                          font:{size:12,weight:"bold"}
+                                            }
+                                }
+                      }
+              },
+              scales:{
+                      x:{
+                                title:{display:true,text:"NUMBER OF ASSETS / ALPHAS IN PORTFOLIO",font:{weight:"bold"}},
+                                grid:{color:"#ddd"}
+                      },
+                      y:{
+                                min:1,max:10,
+                                title:{display:true,text:"ANNUAL PORTFOLIO STANDARD DEVIATION",font:{weight:"bold"}},
+                                grid:{color:"#ddd"}
+                      }
+              }
+        }
+    });
+  </script>
+    <div class="section">
+      <h2>How to read this chart from left to right</h2>
+      <p>At the far left, the portfolio holds one asset. Volatility is high because there is no diversification. As assets are added moving right, volatility falls. The rate of decline depends entirely on correlation.</p>
+    <h2>X-axis definition</h2>
+    <p><strong>Number of Assets / Alphas in Portfolio.</strong> This counts distinct holdings or independent return sources. More assets only reduce risk if they are not highly correlated.</p>
+    <h2>Left Y-axis definition</h2>
+    <p><strong>Annual Portfolio Standard Deviation.</strong> This measures volatility. Higher values mean larger year-to-year swings and higher risk. Lower values mean smoother returns.</p>
+    <h2>Correlation curves</h2>
+    <p>Each line represents portfolios built from assets with the same average correlation.</p>
+    <p>Higher correlation means assets move together and diversification benefits are limited. Lower correlation means assets move independently and volatility drops faster.</p>
+    <h2>Most Institutional Portfolios</h2>
+    <p>The red shaded region shows portfolios with many holdings that are highly correlated. Risk remains elevated despite multiple positions because the assets behave similarly.</p>
+    <h2>Diversified Beta Portfolios</h2>
+    <p>The green shaded region shows portfolios with fewer assets and lower correlation. These achieve materially lower volatility with fewer holdings.</p>
+    <h2>Return-to-Risk Ratio (right column)</h2>
+    <p>This converts volatility into efficiency. It answers the question: how much return is earned per unit of risk. As volatility declines, this ratio rises, indicating more productive risk usage.</p>
+    <h2>Probability of losing money in a given year (far-right column)</h2>
+    <p>This estimates the likelihood of a negative annual return. Lower correlation portfolios materially reduce this probability.</p>
+    <h2>Core takeaway</h2>
+    <p>Diversification works through independence, not quantity. Fewer low-correlated assets can produce lower risk and higher efficiency than many correlated ones.</p>
+    </div>div>
+  </body>
+</html>html></p></p></strong></strong></p></p>
+  </script></h1>
+  </body>
+  </style></title>
+  </head>
