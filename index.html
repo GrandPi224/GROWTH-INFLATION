@@ -6,6 +6,7 @@
     <title>Investment Principles - Audio Guide</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Merriweather:wght@300;400&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -763,6 +764,115 @@
             color: var(--accent);
         }
 
+        /* Correlation Chart Styles */
+        .correlation-chart-container {
+            margin: 32px 0;
+            background: var(--bg-tertiary);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .correlation-chart-wrapper {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .correlation-chart-wrapper canvas {
+            flex: 1;
+            max-width: 100%;
+            height: 400px !important;
+        }
+
+        .correlation-info-columns {
+            display: flex;
+            gap: 16px;
+            flex-shrink: 0;
+        }
+
+        .info-column {
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .info-header {
+            font-family: 'Inter', sans-serif;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            line-height: 1.4;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-values {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .correlation-legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px 32px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .correlation-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .correlation-legend-item:hover {
+            background: var(--bg-secondary);
+            transform: translateY(-1px);
+        }
+
+        .legend-line {
+            display: inline-block;
+            width: 28px;
+            height: 4px;
+            border-radius: 2px;
+            vertical-align: middle;
+            transition: transform 0.2s ease;
+        }
+
+        .correlation-legend-item:hover .legend-line {
+            transform: scaleX(1.2);
+        }
+
+        .correlation-explanation {
+            margin-top: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .correlation-chart-wrapper {
+                flex-direction: column;
+            }
+            
+            .correlation-info-columns {
+                justify-content: center;
+                width: 100%;
+            }
+        }
+
         .chart-tooltip {
             background: var(--bg-secondary) !important;
             border: 1px solid var(--border) !important;
@@ -851,6 +961,7 @@
             <a href="#beta-vs-alpha" class="toc-item">Beta Over Alpha</a>
             <a href="#environmental-balance" class="toc-item">Environmental Balance</a>
             <a href="#capital-vs-risk" class="toc-item">Capital vs. Risk Impact</a>
+            <a href="#diversification-correlation" class="toc-item">Diversification & Correlation</a>
         </nav>
     </aside>
 
@@ -1120,6 +1231,81 @@
                     <p><strong>The Key Insight:</strong> Even though equities represent only 60% of the capital in this typical portfolio, they account for 82% of the risk. This means the portfolio's performance will be almost entirely driven by how stocks perform—the other assets barely matter from a risk perspective.</p>
                 </div>
                 
+                <h3 id="diversification-correlation">Diversification, Correlation, and Portfolio Risk</h3>
+                <p>Diversification works through independence, not quantity. Fewer low-correlated assets can produce lower risk and higher efficiency than many correlated ones.</p>
+                
+                <div class="correlation-chart-container">
+                    <div class="correlation-chart-wrapper">
+                        <canvas id="correlationChart"></canvas>
+                        <div class="correlation-info-columns">
+                            <div class="info-column">
+                                <div class="info-header">RETURN-TO-RISK<br>RATIO</div>
+                                <div class="info-values">
+                                    <span>0.25</span>
+                                    <span>0.28</span>
+                                    <span>0.31</span>
+                                    <span>0.36</span>
+                                    <span>0.42</span>
+                                    <span>0.50</span>
+                                    <span>0.63</span>
+                                    <span>0.83</span>
+                                    <span>1.25</span>
+                                    <span>2.50</span>
+                                </div>
+                            </div>
+                            <div class="info-column">
+                                <div class="info-header">PROBABILITY OF<br>LOSING MONEY</div>
+                                <div class="info-values">
+                                    <span>40%</span>
+                                    <span>39%</span>
+                                    <span>38%</span>
+                                    <span>36%</span>
+                                    <span>34%</span>
+                                    <span>31%</span>
+                                    <span>26%</span>
+                                    <span>20%</span>
+                                    <span>11%</span>
+                                    <span>1%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="correlation-legend">
+                        <div class="correlation-legend-item">
+                            <span class="legend-line" id="corrLegend60" style="background: #e74c3c;"></span>
+                            <span>60% Correlation</span>
+                        </div>
+                        <div class="correlation-legend-item">
+                            <span class="legend-line" id="corrLegend40" style="background: #3498db;"></span>
+                            <span>40% Correlation</span>
+                        </div>
+                        <div class="correlation-legend-item">
+                            <span class="legend-line" id="corrLegend20" style="background: #f1c40f;"></span>
+                            <span>20% Correlation</span>
+                        </div>
+                        <div class="correlation-legend-item">
+                            <span class="legend-line" id="corrLegend10" style="background: #95a5a6;"></span>
+                            <span>10% Correlation</span>
+                        </div>
+                        <div class="correlation-legend-item">
+                            <span class="legend-line" id="corrLegend0" style="background: #2ecc71;"></span>
+                            <span>0% Correlation</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="correlation-explanation">
+                    <div class="key-point">
+                        <p><strong>How to read this chart:</strong> At the far left, the portfolio holds one asset with high volatility. As assets are added moving right, volatility falls. The rate of decline depends entirely on correlation between assets.</p>
+                    </div>
+                    <div class="key-point">
+                        <p><strong>Most Institutional Portfolios (red zone):</strong> Many holdings that are highly correlated. Risk remains elevated despite multiple positions because the assets behave similarly.</p>
+                    </div>
+                    <div class="key-point">
+                        <p><strong>Diversified Beta Portfolios (green zone):</strong> Fewer assets with lower correlation. These achieve materially lower volatility with fewer holdings—proving that diversification works through independence, not quantity.</p>
+                    </div>
+                </div>
+                
                 <div class="highlight-box">
                     <p>All asset prices have built into them expectations about future economic conditions. As those expectations change, prices change. Understanding this connection between asset prices and the economic environment is essential to investing well.</p>
                 </div>
@@ -1226,6 +1412,7 @@
             { id: 'beta-vs-alpha', title: 'Beta Over Alpha', content: 'For nearly everyone, the strategic asset allocation decision beta is far more important than the tactical decision alpha. It is very difficult to make good tactical decisions or to trust that others will have enough skill to make them on your behalf. For most investors the biggest juice to squeeze is in making a great beta portfolio. A portfolio which does not rely on making bets or predicting which assets will do well, but rather is structurally designed to do well whatever the future has in store. Beta is a reliable source of return because asset classes will outperform cash over the long term. The capitalist system depends on it. Capital formation falls apart if investments dont produce better returns than cash over time so central banks do everything in their power to ensure this remains the case. Risk premium is embedded. Investors want to be compensated for the risk of investing so there is typically a risk premium embedded in asset prices. The outperformance of asset classes over cash cannot be very positive for too long. If it was it would be too good a deal and all the money would go into it. Monthly return-to-risk ratios of betas will typically be in the range of about 0.2 to 0.25. Since all investments compete with each other asset classes have similar returns relative to risks. Higher-risk assets will tend to provide higher returns above cash to compensate for their higher risks while lower-risk assets will tend to provide lower returns. Return streams can be risk adjusted to be risk balanced. Low-return low-risk assets like bonds can be transformed into high-return high-risk assets by using leverage borrowing cash to buy more of them. This allows low-risk assets like bonds to better diversify high-risk assets like stocks in a portfolio without sacrificing returns. Risk-adjusting assets provides many assets to choose from to make a well-diversified portfolio at whatever level of return one is interested in.' },
             { id: 'environmental-balance', title: 'Environmental Balance', content: 'Reliable diversification requires balancing risks across economic environments. Changes in discounted growth, inflation, risk premia, and discount rates cause changes in asset prices. One way to build a well-diversified beta portfolio that performs well across environments is to put an equal amount of risk into assets that do well when growth is faster than expected, growth is slower than expected, inflation is higher than expected, and inflation is lower than expected. This four-quadrant approach ensures you have something working regardless of which economic scenario unfolds. Rather than betting on one outcome you are structurally positioned to collect risk premiums in any environment.' },
             { id: 'capital-vs-risk', title: 'Capital Allocation vs Risk Impact', content: 'To understand why risk allocation matters more than capital allocation, consider a typical institutional portfolio. The capital allocation might look diversified but the risk impact tells a very different story. Equities go from 60% of capital to 82% of risk. A portfolio that looks diversified by dollars is actually dominated by a single risk factor. This is why understanding risk allocation not just capital allocation is essential. Nominal bonds real estate MBS cash corporate bonds high yield bonds IL bonds commodities.' },
+            { id: 'diversification-correlation', title: 'Diversification, Correlation, and Portfolio Risk', content: 'Diversification works through independence not quantity. Fewer low-correlated assets can produce lower risk and higher efficiency than many correlated ones. At the far left the portfolio holds one asset with high volatility. As assets are added moving right volatility falls. The rate of decline depends entirely on correlation between assets. Most institutional portfolios have many holdings that are highly correlated. Risk remains elevated despite multiple positions because the assets behave similarly. Diversified beta portfolios use fewer assets with lower correlation achieving materially lower volatility with fewer holdings. Return-to-risk ratio probability of losing money in a given year.' },
             { id: 'takeaways', title: 'Key Takeaways', content: 'Every investment is an exchange of money today for cash flows in the future. Investors need to be compensated for taking on risk. Expected returns are connected to expected levels of risk. Markets and the economy are the same thing viewed from different angles. Risk drives return. It is the risk allocation, not the capital allocation, of a portfolio that determines its performance. Concentrated risk leads to inconsistent returns. Portfolios that concentrate their risk in a single asset class will inherit the boom/bust profile and environmental biases of that asset class. No tradeoff between diversification and return. By risk-adjusting asset classes, investors can achieve better diversification without sacrificing return.' }
         ];
 
@@ -1446,6 +1633,238 @@
                     }]
                 },
                 options: chartOptions
+            });
+        }
+
+        // Correlation Chart - Diversification and Portfolio Risk
+        const correlationCtx = document.getElementById('correlationChart');
+        if (correlationCtx) {
+            const xLabels = Array.from({length: 20}, (_, i) => i + 1);
+            
+            function correlationCurve(start, floor, k) {
+                return xLabels.map(v => floor + (start - floor) * Math.exp(-k * (v - 1)));
+            }
+
+            const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+            const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+            const textColor = isDark ? '#e8e8ed' : '#111';
+
+            // Colors matching the reference image
+            const correlationColors = {
+                '60': '#e74c3c',  // Red
+                '40': '#3498db',  // Blue
+                '20': '#f1c40f',  // Yellow/Gold
+                '10': '#95a5a6',  // Gray
+                '0': '#2ecc71'    // Green
+            };
+
+            const correlationChart = new Chart(correlationCtx, {
+                type: 'line',
+                data: {
+                    labels: xLabels,
+                    datasets: [
+                        {
+                            label: '60% Correlation',
+                            data: correlationCurve(10, 7.8, 0.35),
+                            borderColor: correlationColors['60'],
+                            borderWidth: 3,
+                            tension: 0.3,
+                            pointRadius: 0,
+                            pointHoverRadius: 6,
+                            pointHoverBackgroundColor: correlationColors['60'],
+                            pointHoverBorderColor: '#fff',
+                            pointHoverBorderWidth: 2,
+                            fill: false
+                        },
+                        {
+                            label: '40% Correlation',
+                            data: correlationCurve(10, 6.6, 0.38),
+                            borderColor: correlationColors['40'],
+                            borderWidth: 3,
+                            tension: 0.3,
+                            pointRadius: 0,
+                            pointHoverRadius: 6,
+                            pointHoverBackgroundColor: correlationColors['40'],
+                            pointHoverBorderColor: '#fff',
+                            pointHoverBorderWidth: 2,
+                            fill: false
+                        },
+                        {
+                            label: '20% Correlation',
+                            data: correlationCurve(10, 5.0, 0.42),
+                            borderColor: correlationColors['20'],
+                            borderWidth: 3,
+                            tension: 0.3,
+                            pointRadius: 0,
+                            pointHoverRadius: 6,
+                            pointHoverBackgroundColor: correlationColors['20'],
+                            pointHoverBorderColor: '#fff',
+                            pointHoverBorderWidth: 2,
+                            fill: false
+                        },
+                        {
+                            label: '10% Correlation',
+                            data: correlationCurve(10, 3.8, 0.45),
+                            borderColor: correlationColors['10'],
+                            borderWidth: 3,
+                            tension: 0.3,
+                            pointRadius: 0,
+                            pointHoverRadius: 6,
+                            pointHoverBackgroundColor: correlationColors['10'],
+                            pointHoverBorderColor: '#fff',
+                            pointHoverBorderWidth: 2,
+                            fill: false
+                        },
+                        {
+                            label: '0% Correlation',
+                            data: correlationCurve(10, 2.2, 0.48),
+                            borderColor: correlationColors['0'],
+                            borderWidth: 3,
+                            tension: 0.3,
+                            pointRadius: 0,
+                            pointHoverRadius: 6,
+                            pointHoverBackgroundColor: correlationColors['0'],
+                            pointHoverBorderColor: '#fff',
+                            pointHoverBorderWidth: 2,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(18, 18, 26, 0.95)',
+                            titleColor: '#e8e8ed',
+                            bodyColor: '#a0a0b0',
+                            borderColor: '#2a2a3a',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
+                            titleFont: { family: 'Inter', size: 14, weight: '600' },
+                            bodyFont: { family: 'Inter', size: 13 },
+                            callbacks: {
+                                title: function(context) {
+                                    return context[0].label + ' Assets in Portfolio';
+                                },
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.raw.toFixed(1) + '% Std Dev';
+                                }
+                            }
+                        },
+                        annotation: {
+                            annotations: {
+                                instBox: {
+                                    type: 'box',
+                                    xMin: 2,
+                                    xMax: 6,
+                                    yMin: 7.5,
+                                    yMax: 9.5,
+                                    backgroundColor: 'rgba(139, 69, 69, 0.4)',
+                                    borderWidth: 0
+                                },
+                                instLabel: {
+                                    type: 'label',
+                                    xValue: 4,
+                                    yValue: 9.0,
+                                    content: ['MOST INSTITUTIONAL', 'PORTFOLIOS'],
+                                    font: { size: 11, weight: 'bold', family: 'Inter' },
+                                    color: '#fff'
+                                },
+                                betaBox: {
+                                    type: 'box',
+                                    xMin: 6,
+                                    xMax: 9,
+                                    yMin: 4.5,
+                                    yMax: 5.8,
+                                    backgroundColor: 'rgba(46, 125, 50, 0.4)',
+                                    borderWidth: 0
+                                },
+                                betaLabel: {
+                                    type: 'label',
+                                    xValue: 5,
+                                    yValue: 4.2,
+                                    content: ['DIVERSIFIED BETA', 'PORTFOLIOS'],
+                                    font: { size: 11, weight: 'bold', family: 'Inter' },
+                                    color: '#fff'
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'NUMBER OF ASSETS / ALPHAS IN PORTFOLIO',
+                                font: { weight: 'bold', size: 12, family: 'Inter' },
+                                color: textColor
+                            },
+                            grid: { color: gridColor },
+                            ticks: { 
+                                color: textColor,
+                                font: { weight: '600', family: 'Inter' }
+                            }
+                        },
+                        y: {
+                            min: 1,
+                            max: 10,
+                            title: {
+                                display: true,
+                                text: 'ANNUAL PORTFOLIO STANDARD DEVIATION',
+                                font: { weight: 'bold', size: 12, family: 'Inter' },
+                                color: textColor
+                            },
+                            grid: { color: gridColor },
+                            ticks: { 
+                                color: textColor,
+                                font: { weight: '600', family: 'Inter' }
+                            }
+                        }
+                    },
+                    onHover: (event, elements) => {
+                        event.native.target.style.cursor = elements.length ? 'pointer' : 'default';
+                    }
+                }
+            });
+
+            // Make legend items interactive - hover to highlight line
+            const legendItems = document.querySelectorAll('.correlation-legend-item');
+            legendItems.forEach((item, index) => {
+                item.style.cursor = 'pointer';
+                item.style.transition = 'opacity 0.2s, transform 0.2s';
+                
+                item.addEventListener('mouseenter', () => {
+                    correlationChart.data.datasets.forEach((dataset, i) => {
+                        if (i === index) {
+                            dataset.borderWidth = 5;
+                        } else {
+                            dataset.borderWidth = 1;
+                            dataset.borderColor = dataset.borderColor.replace(')', ', 0.3)').replace('rgb', 'rgba');
+                        }
+                    });
+                    correlationChart.update('none');
+                    
+                    legendItems.forEach((li, i) => {
+                        if (i !== index) li.style.opacity = '0.4';
+                    });
+                });
+                
+                item.addEventListener('mouseleave', () => {
+                    const colors = ['#e74c3c', '#3498db', '#f1c40f', '#95a5a6', '#2ecc71'];
+                    correlationChart.data.datasets.forEach((dataset, i) => {
+                        dataset.borderWidth = 3;
+                        dataset.borderColor = colors[i];
+                    });
+                    correlationChart.update('none');
+                    
+                    legendItems.forEach(li => li.style.opacity = '1');
+                });
             });
         }
     </script>
